@@ -1,5 +1,22 @@
-<u>Feature One</u>: *Borrow*  
-- Users can easily browse available items within their community, make borrowing requests, and manage their borrowings.  
-
-<u>Feature Two</u>: *Lend*  
-- Users can list items they wish to lend, providing detailed information about their availability and terms.
+API Documentation for Evangadi Forum
+Authentication Middleware
+Endpoint: /api/user/checkUser
+Method: GET
+Description: Checks the current authenticated user's information.
+Request Headers
+● Authorization: Bearer token
+Successful Response
+Status Code: 200 OK
+Content-Type: application/json
+{
+"message": "Valid user",
+"username": “Kebede”,
+“userid”:”123”
+}
+Error Responses
+Status Code: 401 Unauthorized
+Description: Authentication credentials were missing or incorrect.
+{
+"error": "Unauthorized",
+"message": "Authentication invalid"
+}
