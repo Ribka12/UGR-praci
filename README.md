@@ -46,7 +46,19 @@ Registers a new user.
     }
     ```
 * **Success Response:** `201 Created`
-* **Error Responses:** * `400 Bad Request`: Missing fields or password too short.
+                  ```json
+                 {
+                   "message": "User registered successfully"
+                 }
+
+                  ```
+* **Error Responses:** * `400 Bad Request`: : Missing or invalid fields.
+                ```json
+              {
+                 "error": "Bad Request",
+                 "message": "Please provide all required fields"
+              }
+                ```
     * `409 Conflict`: User already exists.
 
 ### Login
