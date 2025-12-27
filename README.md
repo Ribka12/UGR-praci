@@ -1,164 +1,412 @@
 # API Documentation for Evangadi Forum
 
-This documentation provides the details for the Evangadi Forum API endpoints, including authentication, questions, and answers.
+## Authentication Middleware
+
+**Endpoint:** `/api/user/checkUser`  
+**Method:** `GET`  
+
+**Description:** Checks the current authenticated user's information.
+
+### Request Headers
+- **Authorization:** Bearer token
+
+### Successful Response
+**Status Code:** `200 OK`  
+**Content-Type:** `application/json`
+
+```json
+{
+  "message": "Valid user",
+  "username": "Kebede",
+  "userid": "123"
+}
+```
+
+### Error Responses
+
+**Status Code:** `401 Unauthorized`  
+**Description:** Authentication credentials were missing or incorrect.
+
+```json
+{
+  "error": "Unauthorized",
+  "message": "Authentication invalid"
+}
+```
 
 ---
 
-## 🔐 Authentication Middleware
+## Sign-up
 
-### Check User
-Checks the current authenticated user's information.
+**Endpoint:** `/api/user/register`  
+**Method:** `POST`  
 
-* **Endpoint:** `/api/user/checkUser`
-* **Method:** `GET`
-* **Request Headers:** * `Authorization: Bearer <token>`
-* **Success Response:**
-    * **Code:** `200 OK`
-    * **Content:**
-        ```json
-        {
-          "message": "Valid user",
-          "username": "Kebede",
-          "userid": "123"
-        }
-        ```
-* **Error Response:**
-    * **Code:** `401 Unauthorized`
-    * **Content:** `{ "error": "Unauthorized", "message": "Authentication invalid" }`
+**Description:** Registers a new user.
 
----
+### Request Body
+- `username` (string): The username of the user.
+- `first_name` (string): The first name of the user.
+- `last_name` (string): The last name of the user.
+- `email` (string): The email of the user.
+- `password` (string): The password of the user.
 
-## 👤 User Endpoints
+### Successful Response
+**Status Code:** `201 Created`  
+**Content-Type:** `application/json`
 
-### Sign-up
-Registers a new user.
+```json
+{
+  "message": "User registered successfully"
+}
+```
 
-* **Endpoint:** `/api/user/register`
-* **Method:** `POST`
-* **Request Body:**
-    ```json
-    {
-      "username": "string",
-      "first_name": "string",
-      "last_name": "string",
-      "email": "string",
-      "password": "string"
-    }
-    ```
-* **Success Response:** `201 Created`
-                  ```json
-                 {
-                   "message": "User registered successfully"
-                 }
+### Error Responses
 
-                  ```
-* **Error Responses:** * `400 Bad Request`: : Missing or invalid fields.
-                ```json
-              {
-                 "error": "Bad Request",
-                 "message": "Please provide all required fields"
-              }
-                ```
-    * `409 Conflict`: User already exists.
+**Status Code:** `400 Bad Request`  
+**Description:** Missing or invalid fields.
 
-### Login
-Authenticates a user and returns a JWT token.
+```json
+{
+  "error": "Bad Request",
+  "message": "Please provide all required fields"
+}
+```
 
-* **Endpoint:** `/api/user/login`
-* **Method:** `POST`
-* **Request Body:**
-    ```json
-    {
-      "email": "string",
-      "password": "string"
-    }
-    ```
-* **Success Response:** `200 OK`
-    ```json
-    {
-      "message": "User login successful",
-      "token": "jwt_token"
-    }
-    ```
+**Status Code:** `400 Bad Request`  
+**Description:** Password validation failed.
+
+```json
+{
+  "error": "Bad Request",
+  "message": "Password must be at least 8 characters"
+}
+```
+
+**Status Code:** `409 Conflict`  
+**Description:** A user with the provided username or email already exists.
+
+```json
+{
+  "error": "Conflict",
+  "message": "User already existed"
+}
+```
+
+**Status Code:** `500 Internal Server Error`  
+**Description:** An unexpected error occurred.
+
+```json
+{
+  "error": "Internal Server Error",
+  "message": "An unexpected error occurred."
+}
+```
 
 ---
 
-## ❓ Questions Endpoints
+## Login
 
-### Get All Questions
-Fetches all questions.
+**Endpoint:** `/api/user/login`  
+**Method:** `POST`  
 
-* **Endpoint:** `/api/question`
-* **Method:** `GET`
-* **Success Response:** `200 OK`
-    ```json
-    {
-      "questions": [
-        {
-          "question_id": 1,
-          "title": "First Question",
-          "content": "This is the first question.",
-          "user_name": "Sisay",
-          "created_at": "2023-06-30T12:00:00Z"
-        }
-      ]
-    }
-    ```
+**Description:** Authenticates a user and returns a JWT token.
 
-### Get Single Question
-Retrieves details of a specific question.
+### Request Body
+- `email` (string): The email of the user.
+- `password` (string): The password of the user.
 
-* **Endpoint:** `/api/question/:question_id`
-* **Method:** `GET`
-* **URL Parameters:** `question_id` (integer)
-* **Success Response:** `200 OK`
+### Successful Response
+**Status Code:** `200 OK`  
+**Content-Type:** `application/json`
 
----
+```json
+{
+  "message": "User login successful",
+  "token": "jwt_token"
+}
+```
 
-## 💬 Answers Endpoints
+### Error Responses
 
-### Post Answer
-Submits an answer for a specific question.
+**Status Code:** `401 Unauthorized`  
+**Description:** Invalid credentials.
 
-* **Endpoint:** `/api/answer`
-* **Method:** `POST`
-* **Request Body:**
-    ```json
-    {
-      "questionid": 1,
-      "answer": "string"
-    }
-    ```
-* **Success Response:** `201 Created`
+```json
+{
+  "error": "Unauthorized",
+  "message": "Invalid username or password"
+}
+```
 
-### Get Answers for a Question
-Retrieves answers for a specific question.
+**Status Code:** `400 Bad Request`  
+**Description:** Missing or invalid fields.
 
-* **Endpoint:** `/api/answer/:question_id`
-* **Method:** `GET`
-* **URL Parameters:** `question_id` (integer)
-* **Success Response:** `200 OK`
-    ```json
-    {
-      "answers": [
-        {
-          "answer_id": 1,
-          "content": "This is an answer.",
-          "user_name": "Abebe",
-          "created_at": "2023-06-30T12:00:00Z"
-        }
-      ]
-    }
-    ```
+```json
+{
+  "error": "Bad Request",
+  "message": "Please provide all required fields"
+}
+```
+
+**Status Code:** `500 Internal Server Error`  
+**Description:** An unexpected error occurred.
+
+```json
+{
+  "error": "Internal Server Error",
+  "message": "An unexpected error occurred."
+}
+```
 
 ---
 
-## 🛠 Common Error Codes
+## Get Answers for a Question
 
-| Status Code | Description |
-| :--- | :--- |
-| `400` | Bad Request (Missing or invalid fields) |
-| `401` | Unauthorized (Invalid credentials) |
-| `404` | Not Found (Resource does not exist) |
-| `409` | Conflict (User already exists) |
-| `500` | Internal Server Error (Unexpected error) |
+**Endpoint:** `/api/answer/:question_id`  
+**Method:** `GET`  
+
+**Description:** Retrieves answers for a specific question.
+
+### URL Parameters
+- `question_id` (integer): The unique identifier of the question.
+
+### Successful Response
+**Status Code:** `200 OK`  
+**Content-Type:** `application/json`
+
+```json
+{
+  "answers": [
+    {
+      "answer_id": 1,
+      "content": "This is an answer.",
+      "user_name": "Abebe",
+      "created_at": "2023-06-30T12:00:00Z"
+    },
+    {
+      "answer_id": 2,
+      "content": "This is another answer.",
+      "user_name": "Almaz",
+      "created_at": "2023-06-30T13:00:00Z"
+    }
+  ]
+}
+```
+
+### Error Responses
+
+**Status Code:** `404 Not Found`  
+**Description:** The specified question was not found.
+
+```json
+{
+  "error": "Not Found",
+  "message": "The requested question could not be found."
+}
+```
+
+**Status Code:** `500 Internal Server Error`  
+**Description:** An unexpected error occurred.
+
+```json
+{
+  "error": "Internal Server Error",
+  "message": "An unexpected error occurred."
+}
+```
+
+---
+
+## Post Answers for a Question
+
+**Endpoint:** `/api/answer`  
+**Method:** `POST`  
+
+**Description:** Submits an answer for a specific question.
+
+### Request Body
+- `questionid` (number): The id for a specific question.
+- `answer` (string): The answer for a specific question.
+
+### Successful Response
+**Status Code:** `201 Created`  
+**Content-Type:** `application/json`
+
+```json
+{
+  "message": "Answer posted successfully"
+}
+```
+
+### Error Responses
+
+**Status Code:** `400 Bad Request`  
+**Description:** Missing or invalid fields.
+
+```json
+{
+  "error": "Bad Request",
+  "message": "Please provide answer"
+}
+```
+
+**Status Code:** `500 Internal Server Error`  
+**Description:** An unexpected error occurred.
+
+```json
+{
+  "error": "Internal Server Error",
+  "message": "An unexpected error occurred."
+}
+```
+
+---
+
+## Get All Questions
+
+**Endpoint:** `/api/question`  
+**Method:** `GET`  
+
+**Description:** Fetches all questions.
+
+### Successful Response
+**Status Code:** `200 OK`  
+**Content-Type:** `application/json`
+
+```json
+{
+  "questions": [
+    {
+      "question_id": 1,
+      "title": "First Question",
+      "content": "This is the first question.",
+      "user_name": "Sisay",
+      "created_at": "2023-06-30T12:00:00Z"
+    },
+    {
+      "question_id": 2,
+      "title": "Second Question",
+      "content": "This is the second question.",
+      "user_name": "Sara",
+      "created_at": "2023-06-30T13:00:00Z"
+    }
+  ]
+}
+```
+
+### Error Responses
+
+**Status Code:** `404 Not Found`  
+**Description:** No questions found.
+
+```json
+{
+  "error": "Not Found",
+  "message": "No questions found."
+}
+```
+
+**Status Code:** `500 Internal Server Error`  
+**Description:** An unexpected error occurred.
+
+```json
+{
+  "error": "Internal Server Error",
+  "message": "An unexpected error occurred."
+}
+```
+
+---
+
+## Get Single Question
+
+**Endpoint:** `/api/question/:question_id`  
+**Method:** `GET`  
+
+**Description:** Retrieves details of a specific question.
+
+### URL Parameters
+- `question_id` (integer): The unique identifier of the question.
+
+### Successful Response
+**Status Code:** `200 OK`  
+**Content-Type:** `application/json`
+
+```json
+{
+  "question": {
+    "question_id": 1,
+    "title": "First Question",
+    "content": "This is the first question.",
+    "user_id": 123,
+    "created_at": "2023-06-30T12:00:00Z"
+  }
+}
+```
+
+### Error Responses
+
+**Status Code:** `404 Not Found`  
+**Description:** The specified question was not found.
+
+```json
+{
+  "error": "Not Found",
+  "message": "The requested question could not be found."
+}
+```
+
+**Status Code:** `500 Internal Server Error`  
+**Description:** An unexpected error occurred.
+
+```json
+{
+  "error": "Internal Server Error",
+  "message": "An unexpected error occurred."
+}
+```
+
+---
+
+## Post Question
+
+**Endpoint:** `/api/question`  
+**Method:** `POST`  
+
+**Description:** Creates a new question.
+
+### Request Body
+- `title` (string): The title of the question.
+- `description` (string): The description of the question.
+
+### Successful Response
+**Status Code:** `201 Created`  
+**Content-Type:** `application/json`
+
+```json
+{
+  "message": "Question created successfully"
+}
+```
+
+### Error Responses
+
+**Status Code:** `400 Bad Request`  
+**Description:** Missing or invalid fields.
+
+```json
+{
+  "error": "Bad Request",
+  "message": "Please provide all required fields"
+}
+```
+
+**Status Code:** `500 Internal Server Error`  
+**Description:** An unexpected error occurred.
+
+```json
+{
+  "error": "Internal Server Error",
+  "message": "An unexpected error occurred."
+}
+```
